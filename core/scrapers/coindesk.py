@@ -76,15 +76,16 @@ class CoindeskScraper:
     def __get_data(self) -> None:
         for key, value in self.params.items():
             call_function = self.__get_metrics
-            type: str = value['type']
-            del value['type']
+            params = { **value }
+            type: str = params['type']
+            del params['type']
 
             if type == CoindeskDataEnum.price:
                 call_function = self.__get_price
 
             params: Dict[str, str] = {
                 'key': key,
-                **value,
+                **params,
             }
 
             call_function(**params)

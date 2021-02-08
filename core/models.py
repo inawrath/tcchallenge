@@ -11,7 +11,7 @@ class Asset(models.Model):
     """
     Model to store the assets
     """
-    name = models.CharField(max_length=100) # Bitcoin, Etherium scraper
+    name = models.CharField(max_length=100, unique=True) # Bitcoin, Etherium scraper
     description = models.TextField()
     creation_date = models.DateTimeField(auto_now_add=True)
 
@@ -32,7 +32,7 @@ class Scraper(models.Model):
     scrape_frecuency = models.IntegerField(default=5)
     active = models.BooleanField(default=True)
     creation_date = models.DateTimeField(auto_now_add=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(auto_now=True)
     task = models.OneToOneField(
         PeriodicTask,
         on_delete=models.CASCADE,

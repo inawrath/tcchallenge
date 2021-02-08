@@ -70,7 +70,7 @@ class CoindeskScraper:
         self.html: str = request.text
 
     def __parse_html(self) -> None:
-        self.soup: BeautifulSoup = BeautifulSoup(self.html, 'html5')
+        self.soup: BeautifulSoup = BeautifulSoup(self.html, 'html.parser')
         del self.html
 
     def __get_data(self) -> None:

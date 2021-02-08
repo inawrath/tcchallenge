@@ -1,21 +1,6 @@
 from rest_framework import serializers
 
-from core.models import (
-    Asset,
-    AssetData,
-    Scraper,
-)
-
-class AssetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Asset
-        fields = '__all__'
-
-
-class ScraperSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Scraper
-        exclude = ('task', )
+from core.models import AssetData
 
 
 class AssetDataSerializer(serializers.ModelSerializer):

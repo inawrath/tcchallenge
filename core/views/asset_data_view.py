@@ -6,34 +6,9 @@ from rest_framework.response import Response
 from core.models import (
     Asset,
     AssetData,
-    Scraper,
 )
-from core.serializers import (
-    AssetDataSerializer,
-    AssetSerializer,
-    ScraperSerializer,
-)
+from core.serializers import AssetDataSerializer
 from core.utils import get_first_element
-
-
-class ScraperList(generics.ListCreateAPIView):
-    queryset = Scraper.objects.all()
-    serializer_class = ScraperSerializer
-
-
-class ScraperDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Scraper.objects.all()
-    serializer_class = ScraperSerializer
-
-
-class AssetList(generics.ListCreateAPIView):
-    queryset = Asset.objects.all()
-    serializer_class = AssetSerializer
-
-
-class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Asset.objects.all()
-    serializer_class = AssetSerializer
 
 
 class AssetDataList(generics.ListAPIView):

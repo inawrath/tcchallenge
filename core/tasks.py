@@ -8,7 +8,7 @@ from core.models import (
     AssetData,
     Scraper,
 )
-from core.scrapers.coindesk import CoindeskScraper
+from core.scrapers import CoindeskScraper
 
 @shared_task(name="scrape_to_coindesk")
 def scrape_to_coindesk(scraper_id) -> None:

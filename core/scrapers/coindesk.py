@@ -76,6 +76,7 @@ class CoindeskScraper:
     def __get_data(self) -> None:
         for key, value in self.params.items():
             call_function = self.__get_metrics
+            
             params = { **value }
             type: str = params['type']
             del params['type']

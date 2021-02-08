@@ -2,6 +2,7 @@ version: "3"
 services:
   redis:
     image: redis
+
   migrations:
     build:
       context: .
@@ -14,6 +15,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379
     volumes:
       - .:/code
+
   server:
     build:
       context: .
@@ -28,6 +30,7 @@ services:
       - 8000:8000
     volumes:
       - .:/code
+
   beat:
     build:
       context: .
@@ -40,6 +43,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379
     volumes:
       - .:/code
+
   worker:
     build:
       context: .
@@ -50,5 +54,14 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
+    volumes:
+      - .:/code
+
+  test:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: bash -c 'coverage run --source='.' manage.py test core --pdb && coverage report -m --skip-covered --omit="tcchallenge/*,manage.py"'
+    tty: true
     volumes:
       - .:/code

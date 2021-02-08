@@ -33,12 +33,14 @@ class Scraper(models.Model):
     )
 
     def delete(self, *args, **kwargs):
+        print('delete')
         if self.task is not None:
             self.task.delete()
 
         return super(self.__class__, self).delete(*args, **kwargs)
 
     def setup_task(self):
+        print('setup_task')
         self.task = PeriodicTask.objects.create(
             name=self.asset.name,
             task='scrape_to_coindesk',

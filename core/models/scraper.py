@@ -7,16 +7,8 @@ from django_celery_beat.models import (
     PeriodicTask,
 )
 
-class Asset(models.Model):
-    """
-    Model to store the assets
-    """
-    name = models.CharField(max_length=100, unique=True) # Bitcoin, Etherium scraper
-    description = models.TextField()
-    creation_date = models.DateTimeField(auto_now_add=True)
+from core.models import Asset
 
-    def __str__(self):
-        return "%s - %s" % (self.name, self.description)
 
 class Scraper(models.Model):
     """
@@ -77,20 +69,3 @@ class Scraper(models.Model):
 
     def __str__(self):
         return "%s - %s - %d minutes" % (self.asset, self.active, self.scrape_frecuency)
-
-class AssetData(models.Model):
-    """
-    Model to store the assets information
-    """
-    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
-    price = models.FloatField()
-    low_24h = models.FloatField()
-    high_24h = models.FloatField()
-    returns_24h = models.FloatField()
-    returns_ytd = models.FloatField()
-    volatility = models.FloatField()
-    data_datetime = models.DateTimeField()
-    creation_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.asset.name} - {self.price} - {self.data_datetime}'

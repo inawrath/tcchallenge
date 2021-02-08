@@ -2,14 +2,25 @@ version: "3"
 services:
   redis:
     image: redis
+  migrations:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: bash -c "python manage.py migrate"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    volumes:
+      - .:/code
   server:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
-    command: bash -c "python manage.py migrate core && python manage.py runserver 0:8000"
+    command: bash -c "python manage.py runserver 0:8000"
     depends_on:
-      - redis
-      - worker
+      - migrations
     environment:
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
@@ -21,7 +32,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
-    command: bash -c "python manage.py migrate core && celery -A tcchallenge beat -l INFO"
+    command: bash -c "celery -A tcchallenge beat -l INFO"
+    depends_on:
+      - migrations
     environment:
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
@@ -31,7 +44,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
-    command: bash -c "python manage.py migrate core && celery -A tcchallenge worker -l INFO"
+    command: bash -c "celery -A tcchallenge worker -l INFO"
     depends_on:
       - beat
     environment:

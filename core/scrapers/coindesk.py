@@ -57,34 +57,39 @@ class CoindeskScraper:
             request: Response = get(self.url)
 
             if request.status_code != http.HTTPStatus.OK:
+                # Cambiar por custom exception
                 raise Exception(
                     'No se pudo obtener la informacion del scraper. '
                     f'(url: {self.url} - status: {request.status_code})'
                 )
 
         except requests.exceptions.Timeout:
+            # Cambiar por custom exception
             raise Exception(f'La solicitud a excedido el tiempo maximo. (url: {self.url})')
         except requests.exceptions.ConnectionError:
+            # Cambiar por custom exception
             raise Exception(f'Problemas al intentar conectarse a (url: {self.url})')
 
         self.html: str = request.text
 
     def __parse_html(self) -> None:
-        self.soup: BeautifulSoup = BeautifulSoup(self.html, 'html5')
+        self.soup: BeautifulSoup = BeautifulSoup(self.html, 'html.parser')
         del self.html
 
     def __get_data(self) -> None:
         for key, value in self.params.items():
             call_function = self.__get_metrics
-            type: str = value['type']
-            del value['type']
+
+            params = { **value }
+            type: str = params['type']
+            del params['type']
 
             if type == CoindeskDataEnum.price:
                 call_function = self.__get_price
 
             params: Dict[str, str] = {
                 'key': key,
-                **value,
+                **params,
             }
 
             call_function(**params)

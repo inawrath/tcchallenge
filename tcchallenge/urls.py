@@ -16,6 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from core.views import (
+    AssetDataList,
+    AssetDetail,
+    AssetList,
+    ScraperDetail,
+    ScraperList,
+)
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('asset/', AssetList.as_view(), name='asset_list'),
+    path('asset/<int:pk>/', AssetDetail.as_view(), name='asset_detail'),
+    path('asset/<str:name>/detail/', AssetDataList.as_view(), name='asset_data'),
+    path('scraper/', ScraperList.as_view(), name='scraper_list'),
+    path('scraper/<int:pk>/', ScraperDetail.as_view(), name='scraper_detail'),
 ]

@@ -1,0 +1,67 @@
+version: "3"
+services:
+  redis:
+    image: redis
+
+  migrations:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: bash -c "python manage.py migrate"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    volumes:
+      - .:/code
+
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: bash -c "python manage.py runserver 0:8000"
+    depends_on:
+      - migrations
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/code
+
+  beat:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: bash -c "celery -A tcchallenge beat -l INFO"
+    depends_on:
+      - migrations
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    volumes:
+      - .:/code
+
+  worker:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: bash -c "celery -A tcchallenge worker -l INFO"
+    depends_on:
+      - beat
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    volumes:
+      - .:/code
+
+  test:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: bash -c 'coverage run --source='.' manage.py test core --pdb && coverage report -m --skip-covered --omit="tcchallenge/*,manage.py"'
+    tty: true
+    volumes:
+      - .:/code
